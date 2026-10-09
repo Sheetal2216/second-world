@@ -38,3 +38,6 @@ desktop.ini
 *.njsproj
 *.sln
 *.sw?
+
+backend/data/uploads/
+backend/data/test_*
