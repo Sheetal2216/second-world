@@ -1,7 +1,3 @@
-from services.csv_parser import parse_csv
-from services.text_parser import parse_text
-from services.pdf_parser import parse_pdf
-
 from pathlib import Path
 from uuid import uuid4
 
@@ -13,7 +9,9 @@ from core.database import get_db
 from models.dataset_db import DatasetDB
 from models.project_db import ProjectDB
 from schemas.dataset import DatasetCreate, DatasetResponse
-
+from services.csv_parser import parse_csv
+from services.pdf_parser import parse_pdf
+from services.text_parser import parse_text
 
 router = APIRouter(
     prefix="/api",
@@ -70,11 +68,11 @@ def list_project_datasets(
             detail="Project not found",
         )
 
-    return db.execute(
-        select(DatasetDB).where(
-            DatasetDB.project_id == project_id
-        )
-    ).scalars().all()
+    return (
+        db.execute(select(DatasetDB).where(DatasetDB.project_id == project_id))
+        .scalars()
+        .all()
+    )
 
 
 @router.get(
@@ -151,28 +149,24 @@ def upload_dataset(
         parsed_data=None,
     )
 
-  try:
-    if file_type == "csv":
-        parsed_data = parse_csv(str(file_path))
+    try:
+        if file_type == "csv":
+            parsed_data = parse_csv(str(file_path))
+        elif file_type == "txt":
+            parsed_data = parse_text(str(file_path))
+        elif file_type == "pdf":
+            parsed_data = parse_pdf(str(file_path))
+        else:
+            raise ValueError("Unsupported file type")
 
-    elif file_type == "txt":
-        parsed_data = parse_text(str(file_path))
+        db_dataset.parsed_data = parsed_data
+        db_dataset.status = "processed"
 
-    elif file_type == "pdf":
-        parsed_data = parse_pdf(str(file_path))
-
-    else:
-        raise ValueError("Unsupported file type")
-
-    db_dataset.parsed_data = parsed_data
-    db_dataset.status = "processed"
-
-except Exception:
-    db_dataset.status = "failed"
+    except Exception:
+        db_dataset.status = "failed"
 
     db.add(db_dataset)
     db.commit()
     db.refresh(db_dataset)
 
-    return db_dataset  
-
+    return db_dataset

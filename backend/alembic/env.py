@@ -22,6 +22,8 @@ if config.config_file_name is not None:
 from models.base import Base
 from models.project_db import ProjectDB
 from models.dataset_db import DatasetDB
+from models.world_db import WorldDB
+from models.simulation_db import SimulationDB
 
 target_metadata = Base.metadata
 

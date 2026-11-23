@@ -17,8 +17,8 @@ dist-ssr
 
 # Python
 backend/venv/
-backend/__pycache__/
-__pycache__/
+**/__pycache__/
+*.py[cod]
 
 # Environment variables / secrets
 .env
@@ -41,3 +41,6 @@ desktop.ini
 
 backend/data/uploads/
 backend/data/test_*
+
+.venv/
+venv/

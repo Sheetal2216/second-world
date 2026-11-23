@@ -5,6 +5,8 @@ from api.routes import router
 from api.projects import router as project_router
 from core.config import settings
 from api.datasets import router as dataset_router
+from api.worlds import router as worlds_router
+from api.simulations import router as simulations_router
 
 app = FastAPI(title="SECOND WORLD API")
 
@@ -19,3 +21,5 @@ app.add_middleware(
 app.include_router(router)
 app.include_router(project_router)
 app.include_router(dataset_router)
+app.include_router(worlds_router)
+app.include_router(simulations_router)
